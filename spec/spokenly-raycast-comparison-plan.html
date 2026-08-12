@@ -117,7 +117,7 @@
         {
           "id": "raycast-extension",
           "term": "Raycast Extension",
-          "definition": "TypeScript/React で書く Raycast 公式拡張。getSelectedText、Form、useExec などの API が使える。"
+          "definition": "TypeScript/React で書く Raycast 公式拡張。getSelectedText、open などの API が使える。"
         },
         {
           "id": "word-replacements",
@@ -163,13 +163,14 @@
             data-term-id="get-selected-text"
             >getSelectedText()</mark
           >
-          + Form +
+          +
           <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a> deeplink）とする。<mark
             data-term-id="script-command"
             >Script Command</mark
           >
           は採用しない。選択テキストは clipboard ではなく
-          <mark data-term-id="get-selected-text">getSelectedText</mark> で取得する。
+          <mark data-term-id="get-selected-text">getSelectedText</mark> で取得する。コマンド実行直後に deeplink
+          を開き、Raycast フォームは表示しない。
         </p>
 
         <section class="card mb-6 border border-primary/30 bg-primary/5 shadow-sm">
@@ -179,9 +180,9 @@
               <h2 class="card-title text-base">目的</h2>
             </div>
             <p class="mt-2">
-              任意アプリで選択したテキストを Original に、ユーザー入力した Replacement を Spokenly の
-              <mark data-term-id="word-replacements">Word Replacements</mark> 追加フォームを開き、ユーザーが Spokenly
-              側で Add をクリックして保存する
+              任意アプリで選択したテキストを Spokenly の
+              <mark data-term-id="word-replacements">Word Replacements</mark> 追加フォームの
+              <code class="text-xs">from</code> に渡し、Spokenly 側で Replacement を入力して Add をクリックして保存する
               <mark data-term-id="raycast-extension">Raycast Extension</mark> の仕様を定義する。package manager は
               pnpm、CI は Mac Studio self-hosted runner（<code class="text-xs"
                 >runs-on: [self-hosted, raycast-extension-spokenly-word-replace]</code
@@ -225,8 +226,8 @@
                     で検索バー入力（最大3引数）
                   </td>
                   <td>
-                    <a href="https://developers.raycast.com/api-reference/user-interface/form.md">Form</a>
-                    でバリデーション付き入力
+                    Spokenly 追加フォーム（<a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a>
+                    事前入力後）
                   </td>
                 </tr>
                 <tr>
@@ -272,21 +273,18 @@
               <a href="https://developers.raycast.com/api-reference/environment.md#getselectedtext"
                 >getSelectedText()</a
               >
-              で Original を取得（失敗時は Toast で案内）
+              で Original を取得（失敗時は Toast で案内し、deeplink は開かない）
             </li>
             <li class="step step-primary">
-              <a href="https://developers.raycast.com/api-reference/user-interface/form.md">Form</a> に
-              Original（読み取り専用）と Replacement（必須）を表示
-            </li>
-            <li class="step step-primary">
-              送信時に <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a> で
-              <code class="text-xs">spokenly://word-replacements/add?from=…&amp;to=…</code> を開く（<code
-                class="text-xs"
+              取得直後に <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a> で
+              <code class="text-xs">spokenly://word-replacements/add?from=…</code> を開く（<code class="text-xs"
                 >from</code
               >
-              / <code class="text-xs">to</code> は URL エンコード）
+              のみ URL エンコード。<code class="text-xs">to</code> は付けない）
             </li>
-            <li class="step step-primary">成功 Toast を表示し、Spokenly 側で Add をクリックして保存するよう案内する</li>
+            <li class="step step-primary">
+              成功 Toast で Spokenly の追加フォームを開いたことを伝える（保存完了は示唆しない）
+            </li>
           </ol>
           <p class="mt-4 text-sm">
             <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a> はフォーム事前入力のみで、Add
@@ -319,12 +317,12 @@
           </h2>
           <p class="mb-4">
             Extension は <a href="https://spokenly.app/docs/macos/deeplinks">word-replacements/add deeplink</a> で
-            Spokenly の追加フォームを開く。<code class="text-xs">from</code> / <code class="text-xs">to</code> は URL
-            エンコードし、Add をクリックするまで保存されない。
+            Spokenly の追加フォームを開く。<code class="text-xs">from</code> は URL エンコードし、Add
+            をクリックするまで保存されない。<code class="text-xs">to</code> は deeplink に含めない。
           </p>
           <pre
             class="bg-base-300 rounded-lg p-4 text-sm overflow-x-auto"
-          ><code>spokenly://word-replacements/add?from=&lt;original&gt;&amp;to=&lt;replacement&gt;</code></pre>
+          ><code>spokenly://word-replacements/add?from=&lt;original&gt;</code></pre>
           <p class="mt-4 text-sm">
             timing などの詳細設定は Spokenly の追加フォームでユーザーが選択する。comma 区切りの Original（例:
             <code class="text-xs">raycast, reycast</code>）は Spokenly 側で
@@ -355,7 +353,7 @@
                   <a href="https://developers.raycast.com/api-reference/environment.md#getselectedtext"
                     >getSelectedText</a
                   >
-                  は未選択で reject → catch して Toast 表示。
+                  は未選択で reject → catch して Toast 表示。空文字の deeplink は開かない。
                 </p>
               </div>
             </div>
@@ -364,9 +362,8 @@
                 <span class="badge badge-warning w-fit">中</span>
                 <h3 class="font-semibold">特殊文字・改行・カンマ</h3>
                 <p class="text-sm">
-                  <code class="text-xs">from</code> / <code class="text-xs">to</code> は URL
-                  エンコードする。改行や特殊文字を含む Original はクエリ値として壊れやすい →
-                  事前バリデーションで拒否する。カンマは Spokenly 側で
+                  <code class="text-xs">from</code> は URL エンコードする。改行や特殊文字を含む Original
+                  はクエリ値として壊れやすい → 事前バリデーションで拒否する。カンマは Spokenly 側で
                   <a href="https://spokenly.app/docs/word-replacements">複数バリアント区切り</a
                   >として解釈される点に注意。
                 </p>
@@ -406,7 +403,7 @@
                   <mark data-term-id="get-selected-text">getSelectedText()</mark> で選択テキストを取得（clipboard
                   は使用しない）
                 </li>
-                <li>Form バリデーション・エラー UX</li>
+                <li>コマンド実行直後に deeplink を開く（Raycast フォームなし）</li>
                 <li>pnpm 固定と supply chain 設定</li>
                 <li>CI は Mac Studio self-hosted runner（host runner 未登録なら merge 不可）</li>
                 <li>lint / format を適用</li>
@@ -423,7 +420,7 @@
           <h2 class="text-2xl pb-1 mt-12 mb-4 border-b-4 border-[rgb(20,58,78)]">実装前の検証項目</h2>
           <ul class="list-disc space-y-2 pl-5">
             <li>
-              <code class="text-xs">spokenly://word-replacements/add?from=test&amp;to=TEST</code>
+              <code class="text-xs">spokenly://word-replacements/add?from=test</code>
               が手動で Spokenly の追加フォームを開くか
             </li>
             <li>
@@ -440,13 +437,13 @@
           <h2 class="text-2xl pb-1 mt-12 mb-4 border-b-4 border-[rgb(20,58,78)]">受け入れ条件</h2>
           <ul class="list-disc space-y-2 pl-5">
             <li>
-              選択テキストが Original として Spokenly の追加フォームに事前入力される（<mark
+              選択テキストが <code class="text-xs">from</code> として Spokenly の追加フォームに事前入力される（<mark
                 data-term-id="get-selected-text"
                 >getSelectedText</mark
               >
               経由。clipboard は使用しない）
             </li>
-            <li>Replacement はユーザーが毎回入力できる</li>
+            <li>Replacement は Spokenly 側の追加フォームでユーザーが入力する</li>
             <li>Spokenly 側で Add をクリックすると登録される</li>
             <li>選択なし・deeplink を開けない場合にユーザーへ分かるフィードバックがある</li>
           </ul>
@@ -518,9 +515,8 @@
                   >
                 </li>
                 <li>
-                  <a href="https://developers.raycast.com/api-reference/user-interface/form.md">Raycast — Form</a>
+                  <a href="https://developers.raycast.com/api-reference/environment.md#open">Raycast — open</a>
                 </li>
-                <li><a href="https://developers.raycast.com/utilities/react-hooks/useexec">Raycast — useExec</a></li>
                 <li><a href="https://manual.raycast.com/script-commands">Raycast Manual — Script Commands</a></li>
                 <li>
                   <a href="https://manual.raycast.com/script-commands/arguments"
