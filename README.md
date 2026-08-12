@@ -1,12 +1,12 @@
 # Spokenly Word Replace — Raycast Extension
 
-任意アプリで選択したテキストを Spokenly の Word Replacements に登録する Raycast Extension です。選択テキストは `getSelectedText()` で取得し、clipboard は使用しません。
+任意アプリで選択したテキストを Spokenly の Word Replacements 追加フォームの `from` に渡し、Spokenly 側で Replacement を入力して Add をクリックして保存する Raycast Extension です。選択テキストは `getSelectedText()` で取得し、clipboard は使用しません。コマンド実行直後に deeplink を開き、Raycast フォームは表示しません。
 
 ## 前提条件
 
 - [Raycast](https://www.raycast.com/)（macOS）
 - [mise](https://mise.jdx.dev/)（Node.js 22.22.2 以上と pnpm を管理）
-- [Spokenly](https://spokenly.app/) と `spokenly` CLI（PATH に通っていること）
+- [Spokenly](https://spokenly.app/)（macOS アプリ）
 
 `package.json` の `author` は Store 公開前に自身の Raycast ユーザー名へ差し替えてください。
 
@@ -32,7 +32,7 @@ Raycast で Extension をインポートし、開発モードでコマンドを�
 mise run test
 ```
 
-CLI 引数構築とエラーマッピングは Vitest で検証します。Raycast UI の動作は手動で確認してください。
+deeplink URL 構築は Vitest で検証します。Raycast UI の動作は手動で確認してください。
 
 ## ビルド
 
@@ -57,14 +57,14 @@ mise run format -- "src/path/to/file.ts"
 1. Spokenly アプリを起動する
 1. 任意のアプリでテキストを選択する
 1. Raycast で「Add Word Replacement」コマンドを起動する
-1. Original に選択テキストが表示されることを確認する
-1. Replacement を入力して送信する
-1. Toast で成功が表示され、Spokenly に登録されることを確認する
+1. Raycast フォームが表示されず、Toast で成功が表示されることを確認する
+1. Spokenly の Word Replacements 追加フォームが開き、`from` に選択テキストが事前入力されていることを確認する
+1. Spokenly 側で Replacement を入力し、Add をクリックして登録が完了することを確認する
 
 失敗系:
 
-- 選択なしで起動 → 取得失敗の Toast
-- Spokenly 未起動 / CLI 失敗 → エラー Toast に stderr 等が表示される
+- 選択なしで起動 → 取得失敗の Toast（deeplink は開かない）
+- deeplink を開けない場合 → エラー Toast
 
 ## 仕様
 
