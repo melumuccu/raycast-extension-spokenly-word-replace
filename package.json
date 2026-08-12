@@ -1,0 +1,51 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "spokenly-word-replace",
+  "title": "Spokenly Word Replace",
+  "description": "Register selected text as a Spokenly word replacement",
+  "icon": "extension-icon.png",
+  "author": "thomas",
+  "platforms": [
+    "macOS"
+  ],
+  "categories": [
+    "Productivity"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "add-word-replacement",
+      "title": "Add Word Replacement",
+      "description": "Add selected text to Spokenly word replacements",
+      "mode": "view"
+    }
+  ],
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@raycast/api": "1.104.24",
+    "@raycast/utils": "2.3.0"
+  },
+  "packageManager": "pnpm@10.0.0",
+  "devDependencies": {
+    "@raycast/eslint-config": "2.2.0",
+    "@types/node": "22.19.17",
+    "@types/react": "19.0.10",
+    "@typescript-eslint/eslint-plugin": "8.67.0",
+    "@typescript-eslint/parser": "8.67.0",
+    "eslint": "9.39.3",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "prettier": "3.9.6",
+    "typescript": "5.8.3",
+    "vitest": "4.1.10"
+  }
+}

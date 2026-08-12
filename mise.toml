@@ -1,0 +1,48 @@
+[tools]
+node = "22.22.2"
+pnpm = "10"
+pre-commit = "4"
+gitleaks = "8"
+
+[env]
+_.path = ["./node_modules/.bin"]
+
+[tasks.install]
+description = "Install dependencies"
+run = "pnpm install"
+
+[tasks.dev]
+description = "Run Raycast extension in development mode"
+run = "ray develop"
+
+[tasks.lint]
+description = "Run linters"
+run = "pnpm run lint"
+
+[tasks.format]
+description = "Format source files (pass file paths after --)"
+run = "prettier --write"
+
+[tasks."format:check"]
+description = "Check source file formatting"
+run = "pnpm run format:check"
+
+[tasks.test]
+description = "Run unit tests"
+run = "vitest run"
+
+[tasks.build]
+description = "Build Raycast extension distribution"
+run = "ray build -e dist"
+
+[tasks.check]
+description = "Run lint, format check, test, and build"
+depends = ["lint", "format:check", "test", "build"]
+
+[tasks.hooks-install]
+description = "Install pre-commit and pre-push hooks"
+run = ["pre-commit install", "pre-commit install --hook-type pre-push"]
+
+[tasks."secrets:scan"]
+description = "Scan repository for secrets"
+run = "gitleaks detect --source . --no-banner --redact"

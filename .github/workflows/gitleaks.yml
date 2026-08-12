@@ -1,0 +1,26 @@
+name: gitleaks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  gitleaks:
+    runs-on: [self-hosted, raycast-extension-spokenly-word-replace]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure cache directories
+        run: |
+          echo "MISE_DATA_DIR=$RUNNER_TOOL_CACHE/mise" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TOOL_CACHE/mise"
+      - uses: jdx/mise-action@v3
+        with:
+          cache: false
+      - name: Run gitleaks
+        run: mise run secrets:scan

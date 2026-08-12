@@ -1,0 +1,15 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.2
+    hooks:
+      - id: gitleaks
+        stages: [pre-commit]
+  - repo: local
+    hooks:
+      - id: check-pre-push
+        name: Run quality gate before push
+        entry: mise run check
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
