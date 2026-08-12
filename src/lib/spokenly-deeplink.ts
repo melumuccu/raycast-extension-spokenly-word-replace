@@ -18,10 +18,6 @@ export function mapOpenDeeplinkError(error: unknown): string {
   return "Spokenly の deeplink を開けませんでした。";
 }
 
-export async function openWordReplacementAdd(
-  openFn: OpenFn,
-  original: string,
-  replacement: string,
-): Promise<void> {
+export async function openWordReplacementAdd(openFn: OpenFn, original: string, replacement: string): Promise<void> {
   await openFn(buildWordReplacementAddUrl(original, replacement));
 }

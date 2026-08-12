@@ -17,14 +17,14 @@ MVP は **Raycast Extension**（`getSelectedText()` + Form + `open` deeplink）�
 
 ## 方式比較（参考: Script Command は不採用）
 
-| 比較軸           | Script Command                               | Extension（採用）                                              |
-| ---------------- | -------------------------------------------- | -------------------------------------------------------------- |
-| 選択テキスト取得 | clipboard / `{selection}` または AppleScript | `getSelectedText()` 公式 API                                   |
-| Replacement 入力 | `@raycast.argument`                          | Form（バリデーション付き）                                     |
-| 登録起動         | シェルから直接 `spokenly replacements add`   | `open` で word-replacements/add deeplink を開く                |
-| 実装コスト       | 低                                           | 中〜高                                                         |
+| 比較軸           | Script Command                               | Extension（採用）                                                      |
+| ---------------- | -------------------------------------------- | ---------------------------------------------------------------------- |
+| 選択テキスト取得 | clipboard / `{selection}` または AppleScript | `getSelectedText()` 公式 API                                           |
+| Replacement 入力 | `@raycast.argument`                          | Form（バリデーション付き）                                             |
+| 登録起動         | シェルから直接 `spokenly replacements add`   | `open` で word-replacements/add deeplink を開く                        |
+| 実装コスト       | 低                                           | 中〜高                                                                 |
 | 権限             | Cmd+C 経路または Accessibility               | getSelectedText は Raycast 標準権限内。deeplink は Spokenly アプリ連携 |
-| 登録方式         | CLI で即時登録（確認なし）                   | deeplink でフォーム事前入力（Add は Spokenly 側で手動）        |
+| 登録方式         | CLI で即時登録（確認なし）                   | deeplink でフォーム事前入力（Add は Spokenly 側で手動）                |
 
 本 PJ では Script Command を採用しない。上記は比較検討時の参考情報である。
 
@@ -59,13 +59,13 @@ timing などの詳細設定は Spokenly の追加フォームでユーザーが
 
 ## リスクと対策
 
-| 重要度 | リスク                 | 対策                                                                 |
-| ------ | ---------------------- | -------------------------------------------------------------------- |
-| 高     | Spokenly 未起動        | deeplink は必要に応じて Spokenly を起動する。開けない場合は明確なエラーメッセージ |
-| 中     | 選択取得失敗           | `getSelectedText` の reject を catch して Toast 表示                 |
+| 重要度 | リスク                 | 対策                                                                                                                        |
+| ------ | ---------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| 高     | Spokenly 未起動        | deeplink は必要に応じて Spokenly を起動する。開けない場合は明確なエラーメッセージ                                           |
+| 中     | 選択取得失敗           | `getSelectedText` の reject を catch して Toast 表示                                                                        |
 | 中     | 特殊文字・改行・カンマ | `from` / `to` は URL エンコード。改行や特殊文字は事前バリデーションで拒否。カンマは Spokenly 側で複数バリアント区切りに注意 |
-| 中     | 重複登録               | 同一 Original の再登録は上書きか重複か未確認。Word Replacements 一覧で確認してから Add |
-| 中     | CI runner 未登録       | host に runner 登録を merge 前に完了する                             |
+| 中     | 重複登録               | 同一 Original の再登録は上書きか重複か未確認。Word Replacements 一覧で確認してから Add                                      |
+| 中     | CI runner 未登録       | host に runner 登録を merge 前に完了する                                                                                    |
 
 ## 採用方針
 

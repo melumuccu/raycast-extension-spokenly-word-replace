@@ -163,7 +163,11 @@
             data-term-id="get-selected-text"
             >getSelectedText()</mark
           >
-          + Form + <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a> deeplink）とする。<mark data-term-id="script-command">Script Command</mark>
+          + Form +
+          <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a> deeplink）とする。<mark
+            data-term-id="script-command"
+            >Script Command</mark
+          >
           は採用しない。選択テキストは clipboard ではなく
           <mark data-term-id="get-selected-text">getSelectedText</mark> で取得する。
         </p>
@@ -176,7 +180,8 @@
             </div>
             <p class="mt-2">
               任意アプリで選択したテキストを Original に、ユーザー入力した Replacement を Spokenly の
-              <mark data-term-id="word-replacements">Word Replacements</mark> 追加フォームを開き、ユーザーが Spokenly 側で Add をクリックして保存する
+              <mark data-term-id="word-replacements">Word Replacements</mark> 追加フォームを開き、ユーザーが Spokenly
+              側で Add をクリックして保存する
               <mark data-term-id="raycast-extension">Raycast Extension</mark> の仕様を定義する。package manager は
               pnpm、CI は Mac Studio self-hosted runner（<code class="text-xs"
                 >runs-on: [self-hosted, raycast-extension-spokenly-word-replace]</code
@@ -250,7 +255,8 @@
                   <td>登録方式</td>
                   <td>CLI で即時登録（確認なし）</td>
                   <td>
-                    <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a> でフォーム事前入力（Add は Spokenly 側で手動）
+                    <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a> でフォーム事前入力（Add は Spokenly
+                    側で手動）
                   </td>
                 </tr>
               </tbody>
@@ -280,12 +286,11 @@
               >
               / <code class="text-xs">to</code> は URL エンコード）
             </li>
-            <li class="step step-primary">
-              成功 Toast を表示し、Spokenly 側で Add をクリックして保存するよう案内する
-            </li>
+            <li class="step step-primary">成功 Toast を表示し、Spokenly 側で Add をクリックして保存するよう案内する</li>
           </ol>
           <p class="mt-4 text-sm">
-            <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a> はフォーム事前入力のみで、Add をクリックするまで保存されない。clipboard は使用しない。
+            <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a> はフォーム事前入力のみで、Add
+            をクリックするまで保存されない。clipboard は使用しない。
           </p>
         </section>
 
@@ -309,7 +314,9 @@
         </section>
 
         <section class="mb-6">
-          <h2 class="text-2xl pb-1 mt-12 mb-4 border-b-4 border-[rgb(20,58,78)]">共通: Word Replacements deeplink と保存動作</h2>
+          <h2 class="text-2xl pb-1 mt-12 mb-4 border-b-4 border-[rgb(20,58,78)]">
+            共通: Word Replacements deeplink と保存動作
+          </h2>
           <p class="mb-4">
             Extension は <a href="https://spokenly.app/docs/macos/deeplinks">word-replacements/add deeplink</a> で
             Spokenly の追加フォームを開く。<code class="text-xs">from</code> / <code class="text-xs">to</code> は URL
@@ -335,8 +342,8 @@
                 <span class="badge badge-error w-fit">高</span>
                 <h3 class="font-semibold">Spokenly 未起動</h3>
                 <p class="text-sm">
-                  <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a> は必要に応じて Spokenly を起動する。対策:
-                  deeplink を開けない場合は明確なエラーメッセージを表示する。
+                  <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a> は必要に応じて Spokenly
+                  を起動する。対策: deeplink を開けない場合は明確なエラーメッセージを表示する。
                 </p>
               </div>
             </div>
@@ -357,8 +364,9 @@
                 <span class="badge badge-warning w-fit">中</span>
                 <h3 class="font-semibold">特殊文字・改行・カンマ</h3>
                 <p class="text-sm">
-                  <code class="text-xs">from</code> / <code class="text-xs">to</code> は URL エンコードする。改行や特殊文字を含む
-                  Original はクエリ値として壊れやすい → 事前バリデーションで拒否する。カンマは Spokenly 側で
+                  <code class="text-xs">from</code> / <code class="text-xs">to</code> は URL
+                  エンコードする。改行や特殊文字を含む Original はクエリ値として壊れやすい →
+                  事前バリデーションで拒否する。カンマは Spokenly 側で
                   <a href="https://spokenly.app/docs/word-replacements">複数バリアント区切り</a
                   >として解釈される点に注意。
                 </p>
@@ -369,8 +377,8 @@
                 <span class="badge badge-warning w-fit">中</span>
                 <h3 class="font-semibold">重複登録</h3>
                 <p class="text-sm">
-                  同一 Original の再登録は上書きか重複か未確認。対策: Spokenly の Word Replacements 一覧で確認してから Add
-                  する。
+                  同一 Original の再登録は上書きか重複か未確認。対策: Spokenly の Word Replacements 一覧で確認してから
+                  Add する。
                 </p>
               </div>
             </div>
@@ -469,8 +477,8 @@
               <code class="text-xs">hooks-install</code> / <code class="text-xs">secrets:scan</code>
             </li>
             <li>
-              deeplink 実行層: <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a>（<code
-                class="text-xs"
+              deeplink 実行層:
+              <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a>（<code class="text-xs"
                 >src/lib/spokenly-deeplink.ts</code
               >）。Vitest で URL 構築を検証
             </li>
