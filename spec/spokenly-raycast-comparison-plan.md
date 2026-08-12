@@ -17,14 +17,14 @@ MVP は **Raycast Extension**（`getSelectedText()` + Form + useExec）とする
 
 ## 方式比較（参考: Script Command は不採用）
 
-| 比較軸 | Script Command | Extension（採用） |
-| --- | --- | --- |
+| 比較軸           | Script Command                               | Extension（採用）            |
+| ---------------- | -------------------------------------------- | ---------------------------- |
 | 選択テキスト取得 | clipboard / `{selection}` または AppleScript | `getSelectedText()` 公式 API |
-| Replacement 入力 | `@raycast.argument` | Form（バリデーション付き） |
-| CLI 実行 | シェルから直接 | `useExec` / `execFile` |
-| 実装コスト | 低 | 中〜高 |
-| 権限 | Cmd+C 経路または Accessibility | Raycast 標準権限内 |
-| 登録方式 | CLI 即時登録 | CLI または deeplink 事前入力 |
+| Replacement 入力 | `@raycast.argument`                          | Form（バリデーション付き）   |
+| CLI 実行         | シェルから直接                               | `useExec` / `execFile`       |
+| 実装コスト       | 低                                           | 中〜高                       |
+| 権限             | Cmd+C 経路または Accessibility               | Raycast 標準権限内           |
+| 登録方式         | CLI 即時登録                                 | CLI または deeplink 事前入力 |
 
 本 PJ では Script Command を採用しない。上記は比較検討時の参考情報である。
 
@@ -49,13 +49,13 @@ spokenly replacements add "<original>" "<replacement>" --timing both
 
 ## リスクと対策
 
-| 重要度 | リスク | 対策 |
-| --- | --- | --- |
-| 高 | Spokenly 未起動 | `open -a Spokenly` 後にリトライ、または明確なエラーメッセージ |
-| 中 | 選択取得失敗 | `getSelectedText` の reject を catch して Toast 表示 |
-| 中 | 特殊文字・改行・カンマ | クォート・事前バリデーション。カンマは複数バリアント区切りに注意 |
-| 中 | 重複登録 | `spokenly replacements list` で存在確認 |
-| 中 | CI runner 未登録 | host に runner 登録を merge 前に完了する |
+| 重要度 | リスク                 | 対策                                                             |
+| ------ | ---------------------- | ---------------------------------------------------------------- |
+| 高     | Spokenly 未起動        | `open -a Spokenly` 後にリトライ、または明確なエラーメッセージ    |
+| 中     | 選択取得失敗           | `getSelectedText` の reject を catch して Toast 表示             |
+| 中     | 特殊文字・改行・カンマ | クォート・事前バリデーション。カンマは複数バリアント区切りに注意 |
+| 中     | 重複登録               | `spokenly replacements list` で存在確認                          |
+| 中     | CI runner 未登録       | host に runner 登録を merge 前に完了する                         |
 
 ## 採用方針
 
@@ -94,9 +94,9 @@ spokenly replacements add "<original>" "<replacement>" --timing both
 - Node.js 22.22.2 以上（mise 管理）、pnpm 固定、`pnpm-workspace.yaml` に supply chain 設定
 - `mise.toml` タスク: `install` / `dev` / `check` / `test` / `build` / `lint` / `format` / `hooks-install` / `secrets:scan`
 - CLI 実行層: `child_process.execFile`（`src/lib/spokenly-cli.ts`）。Vitest で argv 構築とエラーマッピングを検証
-- CI: Mac Studio self-hosted（`runs-on: [self-hosted, raycast-extension-spokenly-word-replace]`）。gitleaks と quality（install / lint / test / build）。Raycast UI E2E は CI 対象外
-- pre-commit: gitleaks。pre-push: `mise run test`
-- lint / format: `ray lint`（ESLint flat config + Prettier）。編集後は `mise run lint` / `mise run format` を手動実行（project hooks 未設定）
+- CI: Mac Studio self-hosted（`runs-on: [self-hosted, raycast-extension-spokenly-word-replace]`）。gitleaks のみ。Raycast UI E2E は CI 対象外
+- pre-commit: gitleaks。pre-push: `mise run check`（lint / format check / test / build。失敗時は push 拒否）
+- lint / format: ESLint（`@raycast/eslint-config`）+ Prettier。`mise run lint` / `mise run format:check` / `mise run format`。編集後は手動実行（project hooks 未設定）
 
 ## 外部資料
 

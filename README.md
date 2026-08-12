@@ -8,7 +8,7 @@
 - [mise](https://mise.jdx.dev/)（Node.js 22.22.2 以上と pnpm を管理）
 - [Spokenly](https://spokenly.app/) と `spokenly` CLI（PATH に通っていること）
 
-`package.json` の `author` は `ray lint` が Raycast ユーザー名を検証するため、Store 公開前に自身の Raycast ユーザー名へ差し替えてください。
+`package.json` の `author` は Store 公開前に自身の Raycast ユーザー名へ差し替えてください。
 
 ## セットアップ
 
@@ -44,8 +44,11 @@ mise run build
 
 ```bash
 mise run lint
+mise run format:check
 mise run format -- "src/path/to/file.ts"
 ```
+
+`mise run check` は lint / format check / test / build を順に実行する品質ゲートです。`mise run hooks-install` 後は `git push` 時に pre-push hook 経由で自動実行され、失敗時は push が拒否されます。
 
 編集後の lint / format は、リポジトリに project hooks の仕組みが未設定のため、変更後に上記コマンドを手動実行してください。
 
@@ -70,4 +73,4 @@ mise run format -- "src/path/to/file.ts"
 
 ## CI
 
-GitHub Actions は Mac Studio self-hosted runner（`runs-on: [self-hosted, raycast-extension-spokenly-word-replace]`）で lint / test / build と gitleaks を実行します。Raycast UI の E2E は CI では検証しません。
+品質検査（lint / format check / test / build）は pre-push hook の `mise run check` で実行します。GitHub Actions は gitleaks のみを Mac Studio self-hosted runner（`runs-on: [self-hosted, raycast-extension-spokenly-word-replace]`）で実行します。Raycast UI の E2E は自動検証しません。

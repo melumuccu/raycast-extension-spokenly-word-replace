@@ -6,9 +6,9 @@ repos:
         stages: [pre-commit]
   - repo: local
     hooks:
-      - id: test-pre-push
-        name: Run all tests before push
-        entry: mise run test
+      - id: check-pre-push
+        name: Run quality gate before push
+        entry: mise run check
         language: system
         pass_filenames: false
         always_run: true

@@ -23,6 +23,10 @@ run = "pnpm run lint"
 description = "Format source files (pass file paths after --)"
 run = "prettier --write"
 
+[tasks."format:check"]
+description = "Check source file formatting"
+run = "pnpm run format:check"
+
 [tasks.test]
 description = "Run unit tests"
 run = "vitest run"
@@ -32,8 +36,8 @@ description = "Build Raycast extension distribution"
 run = "ray build -e dist"
 
 [tasks.check]
-description = "Run lint, test, and build"
-depends = ["lint", "test", "build"]
+description = "Run lint, format check, test, and build"
+depends = ["lint", "format:check", "test", "build"]
 
 [tasks.hooks-install]
 description = "Install pre-commit and pre-push hooks"
