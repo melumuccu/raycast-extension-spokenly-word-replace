@@ -51,7 +51,30 @@ export function mapSpokenlyCliError(error: unknown): string {
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 
+const SPOKENLY_CLI_PATH_ENTRY = "/usr/local/bin";
+
 const execFileAsync = promisify(execFile);
+
+export function buildExecFilePath(existingPath?: string): string {
+  const segments = (existingPath ?? "").split(":").filter(Boolean);
+
+  if (segments.includes(SPOKENLY_CLI_PATH_ENTRY)) {
+    return segments.join(":");
+  }
+
+  if (segments.length === 0) {
+    return SPOKENLY_CLI_PATH_ENTRY;
+  }
+
+  return `${segments.join(":")}:${SPOKENLY_CLI_PATH_ENTRY}`;
+}
+
+export function buildExecFileEnv(env: NodeJS.ProcessEnv = process.env): NodeJS.ProcessEnv {
+  return {
+    ...env,
+    PATH: buildExecFilePath(env.PATH),
+  };
+}
 
 export function createExecFileRunner(): ExecFileFn {
   return async (file, args, options) => {
@@ -59,6 +82,7 @@ export function createExecFileRunner(): ExecFileFn {
       timeout: options?.timeout ?? 30_000,
       encoding: "utf8",
       maxBuffer: 1024 * 1024,
+      env: buildExecFileEnv(),
     });
 
     return {
