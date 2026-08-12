@@ -163,7 +163,7 @@
             data-term-id="get-selected-text"
             >getSelectedText()</mark
           >
-          + Form + useExec）とする。<mark data-term-id="script-command">Script Command</mark>
+          + Form + <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a> deeplink）とする。<mark data-term-id="script-command">Script Command</mark>
           は採用しない。選択テキストは clipboard ではなく
           <mark data-term-id="get-selected-text">getSelectedText</mark> で取得する。
         </p>
@@ -176,7 +176,7 @@
             </div>
             <p class="mt-2">
               任意アプリで選択したテキストを Original に、ユーザー入力した Replacement を Spokenly の
-              <mark data-term-id="word-replacements">Word Replacements</mark> へ登録する
+              <mark data-term-id="word-replacements">Word Replacements</mark> 追加フォームを開き、ユーザーが Spokenly 側で Add をクリックして保存する
               <mark data-term-id="raycast-extension">Raycast Extension</mark> の仕様を定義する。package manager は
               pnpm、CI は Mac Studio self-hosted runner（<code class="text-xs"
                 >runs-on: [self-hosted, raycast-extension-spokenly-word-replace]</code
@@ -225,11 +225,11 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>CLI 実行</td>
+                  <td>登録起動</td>
                   <td>シェルから直接 <code class="text-xs">spokenly replacements add</code></td>
                   <td>
-                    <a href="https://developers.raycast.com/utilities/react-hooks/useexec">useExec</a>
-                    で子プロセス実行・エラーハンドリング
+                    <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a> で
+                    <a href="https://spokenly.app/docs/macos/deeplinks">word-replacements/add deeplink</a> を開く
                   </td>
                 </tr>
                 <tr>
@@ -244,13 +244,13 @@
                     <a href="https://manual.raycast.com/script-commands">Raycast へ Accessibility / Automation</a>
                     が必要
                   </td>
-                  <td>getSelectedText は Raycast 標準権限内。CLI 実行は PATH 依存</td>
+                  <td>getSelectedText は Raycast 標準権限内。deeplink は Spokenly アプリ連携</td>
                 </tr>
                 <tr>
                   <td>登録方式</td>
                   <td>CLI で即時登録（確認なし）</td>
                   <td>
-                    CLI または <a href="https://spokenly.app/docs/macos/deeplinks">deeplink 事前入力</a>（Add は手動）
+                    <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a> でフォーム事前入力（Add は Spokenly 側で手動）
                   </td>
                 </tr>
               </tbody>
@@ -273,15 +273,19 @@
               Original（読み取り専用）と Replacement（必須）を表示
             </li>
             <li class="step step-primary">
-              送信時に <a href="https://developers.raycast.com/utilities/react-hooks/useexec">useExec</a> または
-              <code class="text-xs">execFile</code> で <code class="text-xs">spokenly replacements add</code> を実行
+              送信時に <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a> で
+              <code class="text-xs">spokenly://word-replacements/add?from=…&amp;to=…</code> を開く（<code
+                class="text-xs"
+                >from</code
+              >
+              / <code class="text-xs">to</code> は URL エンコード）
             </li>
-            <li class="step step-primary">stderr / exit code を解析し、成功・失敗 Toast を表示</li>
+            <li class="step step-primary">
+              成功 Toast を表示し、Spokenly 側で Add をクリックして保存するよう案内する
+            </li>
           </ol>
           <p class="mt-4 text-sm">
-            <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a>（<code class="text-xs"
-              >spokenly://word-replacements/add?from=…&amp;to=…</code
-            >）はフォーム事前入力のみで Add は手動のため、ワンショット登録には CLI が適する。clipboard は使用しない。
+            <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a> はフォーム事前入力のみで、Add をクリックするまで保存されない。clipboard は使用しない。
           </p>
         </section>
 
@@ -305,19 +309,18 @@
         </section>
 
         <section class="mb-6">
-          <h2 class="text-2xl pb-1 mt-12 mb-4 border-b-4 border-[rgb(20,58,78)]">共通: Spokenly CLI 登録と timing</h2>
+          <h2 class="text-2xl pb-1 mt-12 mb-4 border-b-4 border-[rgb(20,58,78)]">共通: Word Replacements deeplink と保存動作</h2>
           <p class="mb-4">
-            両方式とも最終登録は <a href="https://spokenly.app/docs/macos/cli">Spokenly CLI</a> の
-            <code class="text-xs">replacements add</code> を使う。アプリが起動していることが前提。
+            Extension は <a href="https://spokenly.app/docs/macos/deeplinks">word-replacements/add deeplink</a> で
+            Spokenly の追加フォームを開く。<code class="text-xs">from</code> / <code class="text-xs">to</code> は URL
+            エンコードし、Add をクリックするまで保存されない。
           </p>
           <pre
             class="bg-base-300 rounded-lg p-4 text-sm overflow-x-auto"
-          ><code>spokenly replacements add "&lt;original&gt;" "&lt;replacement&gt;" --timing both</code></pre>
+          ><code>spokenly://word-replacements/add?from=&lt;original&gt;&amp;to=&lt;replacement&gt;</code></pre>
           <p class="mt-4 text-sm">
-            <mark data-term-id="timing-both">timing both</mark> は
-            <a href="https://spokenly.app/docs/word-replacements">AI Instructions の前後で置換を実行</a
-            >する設定。「AI処理の前後に実行」はこの both に対応する。comma 区切りの Original（例:
-            <code class="text-xs">raycast, reycast</code>）も
+            timing などの詳細設定は Spokenly の追加フォームでユーザーが選択する。comma 区切りの Original（例:
+            <code class="text-xs">raycast, reycast</code>）は Spokenly 側で
             <a href="https://spokenly.app/docs/word-replacements">複数バリアントとして1ルール</a>にまとめられる。
           </p>
         </section>
@@ -332,9 +335,8 @@
                 <span class="badge badge-error w-fit">高</span>
                 <h3 class="font-semibold">Spokenly 未起動</h3>
                 <p class="text-sm">
-                  <a href="https://spokenly.app/docs/macos/cli">CLI はローカルアプリへ転送</a
-                  >するため、未起動時は失敗する。対策:
-                  <code class="text-xs">open -a Spokenly</code> 後にリトライ、または明確なエラーメッセージ。
+                  <a href="https://spokenly.app/docs/macos/deeplinks">deeplink</a> は必要に応じて Spokenly を起動する。対策:
+                  deeplink を開けない場合は明確なエラーメッセージを表示する。
                 </p>
               </div>
             </div>
@@ -355,8 +357,8 @@
                 <span class="badge badge-warning w-fit">中</span>
                 <h3 class="font-semibold">特殊文字・改行・カンマ</h3>
                 <p class="text-sm">
-                  CLI 引数は必ずクォートする。改行を含む Original は CLI 引数として壊れやすい →
-                  事前バリデーションで拒否または一時ファイル経由。カンマは Spokenly 側で
+                  <code class="text-xs">from</code> / <code class="text-xs">to</code> は URL エンコードする。改行や特殊文字を含む
+                  Original はクエリ値として壊れやすい → 事前バリデーションで拒否する。カンマは Spokenly 側で
                   <a href="https://spokenly.app/docs/word-replacements">複数バリアント区切り</a
                   >として解釈される点に注意。
                 </p>
@@ -367,8 +369,8 @@
                 <span class="badge badge-warning w-fit">中</span>
                 <h3 class="font-semibold">重複登録</h3>
                 <p class="text-sm">
-                  同一 Original の再登録は上書きか重複か未確認。対策: 登録前に
-                  <code class="text-xs">spokenly replacements list</code> で存在確認、または remove → add。
+                  同一 Original の再登録は上書きか重複か未確認。対策: Spokenly の Word Replacements 一覧で確認してから Add
+                  する。
                 </p>
               </div>
             </div>
@@ -413,8 +415,8 @@
           <h2 class="text-2xl pb-1 mt-12 mb-4 border-b-4 border-[rgb(20,58,78)]">実装前の検証項目</h2>
           <ul class="list-disc space-y-2 pl-5">
             <li>
-              <code class="text-xs">spokenly replacements add "test" "TEST" --timing both</code>
-              が手動で成功するか（Spokenly 起動状態）
+              <code class="text-xs">spokenly://word-replacements/add?from=test&amp;to=TEST</code>
+              が手動で Spokenly の追加フォームを開くか
             </li>
             <li>
               対象アプリ（ブラウザ、エディタ、Slack 等）で
@@ -430,14 +432,15 @@
           <h2 class="text-2xl pb-1 mt-12 mb-4 border-b-4 border-[rgb(20,58,78)]">受け入れ条件</h2>
           <ul class="list-disc space-y-2 pl-5">
             <li>
-              選択テキストが Original として Spokenly に登録される（<mark data-term-id="get-selected-text"
+              選択テキストが Original として Spokenly の追加フォームに事前入力される（<mark
+                data-term-id="get-selected-text"
                 >getSelectedText</mark
               >
               経由。clipboard は使用しない）
             </li>
             <li>Replacement はユーザーが毎回入力できる</li>
-            <li>timing は both（AI 前後）で登録される</li>
-            <li>選択なし・Spokenly 未起動・CLI 失敗時にユーザーへ分かるフィードバックがある</li>
+            <li>Spokenly 側で Add をクリックすると登録される</li>
+            <li>選択なし・deeplink を開けない場合にユーザーへ分かるフィードバックがある</li>
           </ul>
         </section>
 
@@ -445,8 +448,8 @@
           <h2 class="text-2xl pb-1 mt-12 mb-4 border-b-4 border-[rgb(20,58,78)]">未確定事項</h2>
           <ul class="list-disc space-y-2 pl-5 text-sm">
             <li>同一 Original の再登録時の Spokenly 側挙動（上書きか重複か）</li>
-            <li>改行・タブを含む Original の CLI 上限とエスケープ規則</li>
-            <li>CI での Raycast UI 手動検証の範囲（mock / CLI 契約テストとの切り分け）</li>
+            <li>改行・タブを含む Original の deeplink クエリ上限とエスケープ規則</li>
+            <li>CI での Raycast UI 手動検証の範囲（mock / deeplink 契約テストとの切り分け）</li>
             <li>regex 置換や before-ai / after-ai 個別指定の将来ニーズ</li>
           </ul>
         </section>
@@ -466,9 +469,10 @@
               <code class="text-xs">hooks-install</code> / <code class="text-xs">secrets:scan</code>
             </li>
             <li>
-              CLI 実行層: <code class="text-xs">child_process.execFile</code>（<code class="text-xs"
-                >src/lib/spokenly-cli.ts</code
-              >）。Vitest で argv 構築とエラーマッピングを検証
+              deeplink 実行層: <a href="https://developers.raycast.com/api-reference/environment.md#open">open</a>（<code
+                class="text-xs"
+                >src/lib/spokenly-deeplink.ts</code
+              >）。Vitest で URL 構築を検証
             </li>
             <li>
               CI: Mac Studio self-hosted（<code class="text-xs"

@@ -1,6 +1,6 @@
 # Spokenly Word Replace — Raycast Extension
 
-任意アプリで選択したテキストを Spokenly の Word Replacements に登録する Raycast Extension です。選択テキストは `getSelectedText()` で取得し、clipboard は使用しません。
+任意アプリで選択したテキストを Spokenly の Word Replacements 追加フォームへ渡し、Spokenly 側で Add をクリックして保存する Raycast Extension です。選択テキストは `getSelectedText()` で取得し、clipboard は使用しません。
 
 ## 前提条件
 
