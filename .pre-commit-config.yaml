@@ -1,0 +1,15 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.2
+    hooks:
+      - id: gitleaks
+        stages: [pre-commit]
+  - repo: local
+    hooks:
+      - id: test-pre-push
+        name: Run all tests before push
+        entry: mise run test
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
