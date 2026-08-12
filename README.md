@@ -6,7 +6,7 @@
 
 - [Raycast](https://www.raycast.com/)（macOS）
 - [mise](https://mise.jdx.dev/)（Node.js 22.22.2 以上と pnpm を管理）
-- [Spokenly](https://spokenly.app/) と `spokenly` CLI（PATH に通っていること）
+- [Spokenly](https://spokenly.app/)（macOS アプリ）
 
 `package.json` の `author` は Store 公開前に自身の Raycast ユーザー名へ差し替えてください。
 
@@ -32,7 +32,7 @@ Raycast で Extension をインポートし、開発モードでコマンドを�
 mise run test
 ```
 
-CLI 引数構築とエラーマッピングは Vitest で検証します。Raycast UI の動作は手動で確認してください。
+deeplink URL 構築は Vitest で検証します。Raycast UI の動作は手動で確認してください。
 
 ## ビルド
 
@@ -59,12 +59,13 @@ mise run format -- "src/path/to/file.ts"
 1. Raycast で「Add Word Replacement」コマンドを起動する
 1. Original に選択テキストが表示されることを確認する
 1. Replacement を入力して送信する
-1. Toast で成功が表示され、Spokenly に登録されることを確認する
+1. Toast で成功が表示され、Spokenly の Word Replacements 追加フォームが開くことを確認する
+1. Spokenly 側で Add をクリックし、登録が完了することを確認する
 
 失敗系:
 
 - 選択なしで起動 → 取得失敗の Toast
-- Spokenly 未起動 / CLI 失敗 → エラー Toast に stderr 等が表示される
+- deeplink を開けない場合 → エラー Toast
 
 ## 仕様
 

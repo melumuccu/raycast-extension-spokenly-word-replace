@@ -1,7 +1,7 @@
-import { Action, ActionPanel, Form, getSelectedText, showToast, Toast } from "@raycast/api";
+import { Action, ActionPanel, Form, getSelectedText, open, showToast, Toast } from "@raycast/api";
 import { useEffect, useState } from "react";
 
-import { createExecFileRunner, mapSpokenlyCliError, runAddReplacement } from "./lib/spokenly-cli";
+import { mapOpenDeeplinkError, openWordReplacementAdd } from "./lib/spokenly-deeplink";
 
 export default function Command() {
   const [original, setOriginal] = useState("");
@@ -65,16 +65,17 @@ export default function Command() {
     setIsSubmitting(true);
 
     try {
-      await runAddReplacement(createExecFileRunner(), original, trimmedReplacement);
+      await openWordReplacementAdd(open, original, trimmedReplacement);
       await showToast({
         style: Toast.Style.Success,
-        title: "Word Replacement を登録しました",
+        title: "Spokenly で Word Replacement を確認してください",
+        message: "フォームが開きました。Add をクリックして登録を完了してください。",
       });
     } catch (error) {
-      const message = mapSpokenlyCliError(error);
+      const message = mapOpenDeeplinkError(error);
       await showToast({
         style: Toast.Style.Failure,
-        title: "Spokenly CLI の実行に失敗しました",
+        title: "Spokenly の deeplink を開けませんでした",
         message,
       });
     } finally {
