@@ -4,6 +4,8 @@ import {
   REPLACEMENT_TIMING,
   SPOKENLY_CLI,
   buildAddReplacementArgs,
+  buildExecFileEnv,
+  buildExecFilePath,
   mapSpokenlyCliError,
   runAddReplacement,
   type ExecFileFn,
@@ -48,6 +50,70 @@ describe("mapSpokenlyCliError", () => {
 
   it("falls back for unknown errors", () => {
     expect(mapSpokenlyCliError(null)).toBe("Spokenly CLI の実行に失敗しました。");
+  });
+});
+
+describe("buildExecFilePath", () => {
+  it("appends /usr/local/bin when missing from PATH", () => {
+    expect(buildExecFilePath("/usr/bin:/bin")).toBe("/usr/bin:/bin:/usr/local/bin");
+  });
+
+  it("does not duplicate /usr/local/bin when already present", () => {
+    expect(buildExecFilePath("/usr/local/bin:/usr/bin")).toBe("/usr/local/bin:/usr/bin");
+  });
+
+  it("uses /usr/local/bin when PATH is unset or empty", () => {
+    expect(buildExecFilePath(undefined)).toBe("/usr/local/bin");
+    expect(buildExecFilePath("")).toBe("/usr/local/bin");
+  });
+});
+
+describe("buildExecFileEnv", () => {
+  it("preserves other environment variables while augmenting PATH", () => {
+    expect(
+      buildExecFileEnv({
+        HOME: "/Users/test",
+        PATH: "/usr/bin",
+      }),
+    ).toEqual({
+      HOME: "/Users/test",
+      PATH: "/usr/bin:/usr/local/bin",
+    });
+  });
+});
+
+describe("createExecFileRunner", () => {
+  it("passes augmented PATH to execFile child process options", async () => {
+    const execFileMock = vi.fn(
+      (
+        _file: string,
+        _args: string[],
+        options: { env?: NodeJS.ProcessEnv },
+        callback: (error: null, result: { stdout: string; stderr: string }) => void,
+      ) => {
+        expect(options.env?.PATH).toBe("/usr/bin:/usr/local/bin");
+        callback(null, { stdout: "ok", stderr: "" });
+      },
+    );
+
+    vi.doMock("node:child_process", () => ({
+      execFile: execFileMock,
+    }));
+
+    vi.resetModules();
+    const { createExecFileRunner } = await import("./spokenly-cli");
+    const originalPath = process.env.PATH;
+    process.env.PATH = "/usr/bin";
+
+    try {
+      const result = await createExecFileRunner()("spokenly", ["--version"]);
+      expect(result).toEqual({ stdout: "ok", stderr: "" });
+      expect(execFileMock).toHaveBeenCalledOnce();
+    } finally {
+      process.env.PATH = originalPath;
+      vi.doUnmock("node:child_process");
+      vi.resetModules();
+    }
   });
 });
 
