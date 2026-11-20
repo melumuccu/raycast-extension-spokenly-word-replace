@@ -11,7 +11,7 @@ MVP は **Raycast Extension**（`getSelectedText()` + `open` deeplink）とす�
 任意アプリで選択したテキストを Spokenly の Word Replacements 追加フォームの `from` に渡し、Spokenly 側で Replacement を入力して Add をクリックして保存する Raycast Extension の仕様を定義する。
 
 - package manager: **pnpm 固定**（supply chain 設定を含む）
-- CI: **Mac Studio self-hosted runner**（`runs-on: [self-hosted, raycast-extension-spokenly-word-replace]`）。host runner 未登録なら merge 不可
+- CI: **GitHub-hosted runner**（`runs-on: ubuntu-latest`）。public repo のため self-hosted runner は使用しない
 - lint / format: **適用**
 - Tab 補完後 hook: **不適用**
 
@@ -64,7 +64,6 @@ timing などの詳細設定は Spokenly の追加フォームでユーザーが
 | 中     | 選択取得失敗           | `getSelectedText` の reject を catch して Toast 表示。空文字の deeplink は開かない                                   |
 | 中     | 特殊文字・改行・カンマ | `from` は URL エンコード。改行や特殊文字は事前バリデーションで拒否。カンマは Spokenly 側で複数バリアント区切りに注意 |
 | 中     | 重複登録               | 同一 Original の再登録は上書きか重複か未確認。Word Replacements 一覧で確認してから Add                               |
-| 中     | CI runner 未登録       | host に runner 登録を merge 前に完了する                                                                             |
 
 ## 採用方針
 
@@ -72,7 +71,7 @@ timing などの詳細設定は Spokenly の追加フォームでユーザーが
   - `getSelectedText()` で選択テキストを取得（clipboard は使用しない）
   - コマンド実行直後に deeplink を開く（Raycast フォームなし）
   - pnpm 固定と supply chain 設定
-  - CI は Mac Studio self-hosted runner（host runner 未登録なら merge 不可）
+  - CI は GitHub-hosted runner（public repo のため self-hosted runner は使用しない）
   - lint / format を適用
   - Tab 補完後 hook は不適用（今回の利用ツールに必要な hook を設定しないため）
 - **不採用**: Script Command
@@ -81,8 +80,7 @@ timing などの詳細設定は Spokenly の追加フォームでユーザーが
 
 - `spokenly://word-replacements/add?from=test` が手動で Spokenly の追加フォームを開くか
 - 対象アプリで `getSelectedText` が reject しないか
-- Mac Studio self-hosted runner が host に登録済みか
-- pnpm install / lint / format / test が self-hosted runner 上で成功するか
+- gitleaks が GitHub-hosted runner 上で成功するか
 
 ## 受け入れ条件
 
@@ -103,7 +101,7 @@ timing などの詳細設定は Spokenly の追加フォームでユーザーが
 - Node.js 22.22.2 以上（mise 管理）、pnpm 固定、`pnpm-workspace.yaml` に supply chain 設定
 - `mise.toml` タスク: `install` / `dev` / `check` / `test` / `build` / `lint` / `format` / `hooks-install` / `secrets:scan`
 - deeplink 実行層: `open`（`src/lib/spokenly-deeplink.ts`）。Vitest で URL 構築を検証
-- CI: Mac Studio self-hosted runner（`runs-on: [self-hosted, raycast-extension-spokenly-word-replace]`）。gitleaks のみ。Raycast UI E2E は CI 対象外
+- CI: GitHub-hosted runner（`runs-on: ubuntu-latest`）。gitleaks のみ。Raycast UI E2E は CI 対象外
 - pre-commit: gitleaks。pre-push: `mise run check`（lint / format check / test / build。失敗時は push 拒否）
 - lint / format: ESLint（`@raycast/eslint-config`）+ Prettier。`mise run lint` / `mise run format:check` / `mise run format`。編集後は手動実行（project hooks 未設定）
 
