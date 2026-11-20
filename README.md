@@ -73,4 +73,4 @@ mise run format -- "src/path/to/file.ts"
 
 ## CI
 
-品質検査（lint / format check / test / build）は pre-push hook の `mise run check` で実行します。GitHub Actions は gitleaks のみを Mac Studio self-hosted runner（`runs-on: [self-hosted, raycast-extension-spokenly-word-replace]`）で実行します。Raycast UI の E2E は自動検証しません。
+品質検査（lint / format check / test / build）は pre-push hook の `mise run check` で実行します。GitHub Actions は gitleaks のみを GitHub-hosted runner（`runs-on: ubuntu-latest`）で実行します。Raycast UI の E2E は自動検証しません。
